@@ -1,13 +1,4 @@
-// Populate minuteSelect with options from 00 to 59
-const minuteSelect = document.getElementById('minuteSelect');
-for (let i = 0; i < 60; i++) {
-  const minute = String(i).padStart(2, '0');
-  const option = document.createElement('option');
-  option.value = minute;
-  option.textContent = minute;
-  minuteSelect.appendChild(option);
-}
-
+// No need to populate minuteSelect since we now use a single text input for time
 const token = localStorage.getItem('token');
 if (!token) {
   window.location.href = '/login';
@@ -49,21 +40,6 @@ function formatDateTime(isoString) {
   return `${day}/${month}/${year}, ${String(hour).padStart(2, '0')}:${minute} ${ampm}`;
 }
 
-// Helper function: Convert selected 12-hour inputs to 24-hour format "HH:MM"
-function convertTo24Hour() {
-  const hour = parseInt(document.getElementById('hourSelect').value);
-  const minute = document.getElementById('minuteSelect').value;
-  const isPM = document.getElementById('ampmToggle').checked;
-  if (isNaN(hour)) return "";
-  let hour24 = hour;
-  if (isPM) {
-    if (hour !== 12) hour24 = hour + 12;
-  } else {
-    if (hour === 12) hour24 = 0;
-  }
-  return String(hour24).padStart(2, '0') + ':' + minute;
-}
-
 // Helper function: Convert a 24-hour time string "HH:MM" to 12-hour format object
 function convertTo12Hour(time24) {
   const parts = time24.split(':');
@@ -85,12 +61,44 @@ ampmToggle.addEventListener('change', function() {
   this.nextElementSibling.innerText = this.checked ? 'PM' : 'AM';
 });
 
-// References to schedule type toggle and date container
+// Update Action toggle label based on state
+const actionToggle = document.getElementById('actionToggle');
+const actionLabel = document.getElementById('actionLabel');
+actionToggle.addEventListener('change', function() {
+  actionLabel.innerText = this.checked ? 'Turn On' : 'Turn Off';
+});
+actionLabel.innerText = actionToggle.checked ? 'Turn On' : 'Turn Off';
+
+// Update Schedule Type toggle label based on state
 const scheduleTypeToggle = document.getElementById('scheduleTypeToggle');
+const scheduleTypeLabel = document.getElementById('scheduleTypeLabel');
+scheduleTypeToggle.addEventListener('change', function() {
+  scheduleTypeLabel.innerText = this.checked ? 'One-Time' : 'Daily Schedule';
+});
+scheduleTypeLabel.innerText = scheduleTypeToggle.checked ? 'One-Time' : 'Daily Schedule';
+
+// References to date container
 const dateInputContainer = document.getElementById('dateInputContainer');
 scheduleTypeToggle.addEventListener('change', function() {
   dateInputContainer.style.display = this.checked ? 'block' : 'none';
 });
+
+// New function to get time from the text input (in 12-hour format) and convert it to 24-hour format "HH:MM"
+function getTimeValue() {
+  const timeInput = document.getElementById('timeInput').value;
+  const pattern = /^(0?[1-9]|1[0-2]):([0-5][0-9])$/;
+  const match = timeInput.match(pattern);
+  if (!match) return "";
+  let hour = parseInt(match[1]);
+  const minute = match[2];
+  const isPM = ampmToggle.checked;
+  if (isPM) {
+    if (hour !== 12) hour += 12;
+  } else {
+    if (hour === 12) hour = 0;
+  }
+  return String(hour).padStart(2, '0') + ':' + minute;
+}
 
 async function fetchSchedules(){
   const response = await fetch('/api/schedules', {
@@ -101,13 +109,11 @@ async function fetchSchedules(){
   tbody.innerHTML = '';
   schedules.reverse().forEach((schedule) => {
     const row = tbody.insertRow();
-    // For device column, look up friendly name (deviceMapping is injected in HTML)
     const friendlyName = deviceMapping.find(d => d.value === schedule.device)?.name || schedule.device;
     row.insertCell(0).innerText = friendlyName;
     row.insertCell(1).innerText = schedule.action === 1 ? 'On' : 'Off';
     row.insertCell(2).innerText = schedule.schedule_type;
     
-    // For daily schedules, save the raw time value in a data attribute for editing.
     let displayTime = schedule.time;
     if (schedule.schedule_type === 'daily') {
       const t = convertTo12Hour(schedule.time);
@@ -131,7 +137,6 @@ async function fetchSchedules(){
       statusCell.innerHTML = schedule.executed ? `<span style="color:green;">Executed</span>` : `<span style="color:red;">Pending</span>`;
     }
     
-    // Active Toggle Column
     const activeCell = row.insertCell(5);
     const switchDiv = document.createElement("div");
     switchDiv.className = "form-check form-switch";
@@ -180,9 +185,9 @@ document.getElementById('scheduleForm').addEventListener('submit', async functio
   const device = document.getElementById('device').value;
   const action = document.getElementById('actionToggle').checked ? 1 : 0;
   const scheduleType = document.getElementById('scheduleTypeToggle').checked ? 'one-time' : 'daily';
-  let time24 = convertTo24Hour();
+  let time24 = getTimeValue();
   if (!time24) {
-    alert('Please select a valid time.');
+    alert('Please enter a valid time in hh:mm format.');
     return;
   }
   let timeString = time24;
@@ -222,9 +227,6 @@ document.getElementById('scheduleForm').addEventListener('submit', async functio
   if (response.ok) {
     document.getElementById('scheduleForm').reset();
     document.getElementById('scheduleId').value = '';
-    document.getElementById('actionToggle').checked = false;
-    document.getElementById('scheduleTypeToggle').checked = false;
-    dateInputContainer.style.display = 'none';
     fetchSchedules();
   } else {
     alert(data.message || "Error saving schedule");
@@ -236,33 +238,30 @@ document.getElementById('scheduleTable').addEventListener('click', async functio
     const scheduleId = e.target.getAttribute('data-id');
     const row = e.target.parentElement.parentElement;
     document.getElementById('scheduleId').value = scheduleId;
-    // For device, we want the raw device value so that when the form renders, the dropdown selects the corresponding option.
-    // We can reverse-lookup the deviceMapping.
     const deviceValue = deviceMapping.find(d => d.name === row.cells[0].innerText)?.value || row.cells[0].innerText;
     document.getElementById('device').value = deviceValue;
     document.getElementById('actionToggle').checked = row.cells[1].innerText === 'On';
     document.getElementById('scheduleTypeToggle').checked = row.cells[2].innerText === 'one-time';
+    actionLabel.innerText = document.getElementById('actionToggle').checked ? 'Turn On' : 'Turn Off';
+    scheduleTypeLabel.innerText = document.getElementById('scheduleTypeToggle').checked ? 'One-Time' : 'Daily Schedule';
     if (row.cells[2].innerText === 'one-time') {
       let parts = row.cells[3].innerText.split(', ');
       if (parts.length === 2) {
         document.getElementById('date').value = parts[0];
         const timeParts = parts[1].split(' ');
-        const [hour, minute] = timeParts[0].split(':');
+        const timeValue = timeParts[0];
+        document.getElementById('timeInput').value = timeValue;
         const ampm = timeParts[1];
-        document.getElementById('hourSelect').value = hour;
-        document.getElementById('minuteSelect').value = minute;
-        ampmToggle.checked = (ampm === 'PM');
-        ampmToggle.nextElementSibling.innerText = ampm;
+        document.getElementById('ampmToggle').checked = (ampm === 'PM');
+        document.getElementById('ampmToggle').nextElementSibling.innerText = ampm;
         dateInputContainer.style.display = 'block';
       }
     } else {
-      // For daily schedules, use the raw time stored in the row's data attribute
       const rawTime = row.dataset.rawTime;
       const t = convertTo12Hour(rawTime);
-      document.getElementById('hourSelect').value = t.hour;
-      document.getElementById('minuteSelect').value = t.minute;
-      ampmToggle.checked = (t.ampm === 'PM');
-      ampmToggle.nextElementSibling.innerText = t.ampm;
+      document.getElementById('timeInput').value = `${t.hour}:${t.minute}`;
+      document.getElementById('ampmToggle').checked = (t.ampm === 'PM');
+      document.getElementById('ampmToggle').nextElementSibling.innerText = t.ampm;
       dateInputContainer.style.display = 'none';
     }
   } else if (e.target.classList.contains('deleteBtn')) {

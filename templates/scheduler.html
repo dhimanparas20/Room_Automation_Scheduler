@@ -10,7 +10,7 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <!-- External CSS -->
   <link rel="stylesheet" href="/static/css/styles.css">
-  <!-- Pass device mapping from backend -->
+  <!-- Inject device mapping from backend -->
   <script>
     const deviceMapping = {{ devices | tojson }};
   </script>
@@ -34,8 +34,8 @@
         <h4 class="card-title">Add / Update Schedule</h4>
         <form id="scheduleForm">
           <input type="hidden" id="scheduleId">
-          <div class="row">
-            <div class="col-12 col-md-4 mb-3">
+          <div class="row g-2">
+            <div class="col-12 col-md-4">
               <label for="device" class="form-label">Device</label>
               <select class="form-select" id="device" required>
                 {% for device in devices %}
@@ -43,18 +43,18 @@
                 {% endfor %}
               </select>
             </div>
-            <div class="col-12 col-md-4 mb-3">
+            <div class="col-12 col-md-4">
               <label class="form-label">Action</label>
               <div class="form-check form-switch">
                 <input class="form-check-input" type="checkbox" id="actionToggle">
-                <label class="form-check-label" for="actionToggle">Turn On</label>
+                <label class="form-check-label" for="actionToggle" id="actionLabel">Turn Off</label>
               </div>
             </div>
-            <div class="col-12 col-md-4 mb-3">
+            <div class="col-12 col-md-4">
               <label class="form-label">Schedule Type</label>
               <div class="form-check form-switch">
                 <input class="form-check-input" type="checkbox" id="scheduleTypeToggle">
-                <label class="form-check-label" for="scheduleTypeToggle">One-time</label>
+                <label class="form-check-label" for="scheduleTypeToggle" id="scheduleTypeLabel">Daily Schedule</label>
               </div>
             </div>
           </div>
@@ -65,35 +65,19 @@
               <input type="date" class="form-control" id="date">
             </div>
           </div>
-          <!-- Time Input: Group of Hour+Minute selects and an AM/PM toggle -->
+          <!-- Time Input: Input group with time field and AM/PM toggle -->
           <div class="row mb-3" id="timeInputs">
-            <div class="col-12 col-md-8">
+            <div class="col-12">
               <div class="input-group">
-                <select id="hourSelect" class="form-select" required>
-                  <option value="">Hour</option>
-                  <option value="1">1</option>
-                  <option value="2">2</option>
-                  <option value="3">3</option>
-                  <option value="4">4</option>
-                  <option value="5">5</option>
-                  <option value="6">6</option>
-                  <option value="7">7</option>
-                  <option value="8">8</option>
-                  <option value="9">9</option>
-                  <option value="10">10</option>
-                  <option value="11">11</option>
-                  <option value="12">12</option>
-                </select>
-                <select id="minuteSelect" class="form-select" required>
-                  <option value="">Minute</option>
-                </select>
+                <input type="text" id="timeInput" class="form-control time-input" placeholder="hh:mm" pattern="^(0?[1-9]|1[0-2]):[0-5][0-9]$" required>
+                <div class="input-group-text p-0 ampm-container">
+                  <div class="form-check form-switch m-0">
+                    <input class="form-check-input ampm-toggle" type="checkbox" id="ampmToggle">
+                    <label class="form-check-label" for="ampmToggle" id="ampmLabel">AM</label>
+                  </div>
+                </div>
               </div>
-            </div>
-            <div class="col-12 col-md-4 d-flex align-items-center">
-              <div class="form-check form-switch w-100">
-                <input class="form-check-input" type="checkbox" id="ampmToggle">
-                <label class="form-check-label" for="ampmToggle">AM</label>
-              </div>
+              <small class="form-text text-muted">Enter time in 12-hour format (e.g. 02:30)</small>
             </div>
           </div>
           <button type="submit" class="btn btn-primary">Save Schedule</button>
