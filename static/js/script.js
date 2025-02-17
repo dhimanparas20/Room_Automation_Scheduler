@@ -101,7 +101,9 @@ async function fetchSchedules(){
   tbody.innerHTML = '';
   schedules.reverse().forEach((schedule) => {
     const row = tbody.insertRow();
-    row.insertCell(0).innerText = schedule.device;
+    // Lookup friendly name using deviceMapping
+    const friendlyName = deviceMapping.find(d => d.value === schedule.device)?.name || schedule.device;
+    row.insertCell(0).innerText = friendlyName;
     row.insertCell(1).innerText = schedule.action === 1 ? 'On' : 'Off';
     row.insertCell(2).innerText = schedule.schedule_type;
     let displayTime = schedule.time;

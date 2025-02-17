@@ -10,6 +10,10 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <!-- External CSS -->
   <link rel="stylesheet" href="/static/css/styles.css">
+  <!-- Pass device mapping from backend -->
+  <script>
+    const deviceMapping = {{ devices | tojson }};
+  </script>
 </head>
 <body class="bg-black text-white">
   <div class="container">
