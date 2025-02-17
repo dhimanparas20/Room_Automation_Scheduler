@@ -18,8 +18,8 @@ app = Flask(__name__)
 api = Api(app)
 
 # MongoDB connection from env
-MONGO_URI = os.getenv("MONGO_URI")
-mongo_client = MongoClient(MONGO_URI)
+MONGO_CONNECTION_STRING = os.getenv("MONGO_CONNECTION_STRING")
+mongo_client = MongoClient(MONGO_CONNECTION_STRING)
 db = mongo_client['scheduler_db']
 schedules_collection = db['schedules']
 
