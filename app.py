@@ -24,12 +24,12 @@ db = mongo_client['scheduler_db']
 schedules_collection = db['schedules']
 
 # MQTT WebSocket configuration from env
-WEBSOCK_BROKER_ADDRESS = os.getenv("WEBSOCK_BROKER_ADDRESS", "mqtt.mstservices.tech")
+WEBSOCK_BROKER_ADDRESS = os.getenv("WEBSOCK_BROKER_ADDRESS")
 WEBSOCK_PORT = int(os.getenv("WEBSOCK_PORT", "443"))
 WEBSOCK_USE_SSL = os.getenv("WEBSOCK_USE_SSL", "True") == "True"
 USE_CREDS = os.getenv("USE_CREDS", "True") == "True"
-MQTT_USER = os.getenv("MQTT_USER", "mst")
-MQTT_PASS = os.getenv("MQTT_PASS", "1212")
+MQTT_USER = os.getenv("MQTT_USER")
+MQTT_PASS = os.getenv("MQTT_PASS")
 QOS = int(os.getenv("QOS", "0"))
 CLEAN_SESSION = os.getenv("CLEAN_SESSION", "True") == "True"
 RETAINED = os.getenv("RETAINED", "True") == "True"
@@ -242,5 +242,4 @@ if __name__ == '__main__':
         schedule_job(schedule)
     DEBUG = os.getenv("DEBUG", "True") == "True"
     HOST = os.getenv("HOST", "0.0.0.0")
-    PORT = int(os.getenv("PORT", "8000"))
-    app.run(debug=DEBUG, host=HOST, port=PORT,threaded=True)
+    app.run(debug=DEBUG, host=HOST, port=8000,threaded=True)
