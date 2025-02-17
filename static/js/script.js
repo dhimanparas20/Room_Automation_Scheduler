@@ -101,15 +101,18 @@ async function fetchSchedules(){
   tbody.innerHTML = '';
   schedules.reverse().forEach((schedule) => {
     const row = tbody.insertRow();
-    // Lookup friendly name using deviceMapping
+    // For device column, look up friendly name (deviceMapping is injected in HTML)
     const friendlyName = deviceMapping.find(d => d.value === schedule.device)?.name || schedule.device;
     row.insertCell(0).innerText = friendlyName;
     row.insertCell(1).innerText = schedule.action === 1 ? 'On' : 'Off';
     row.insertCell(2).innerText = schedule.schedule_type;
+    
+    // For daily schedules, save the raw time value in a data attribute for editing.
     let displayTime = schedule.time;
     if (schedule.schedule_type === 'daily') {
       const t = convertTo12Hour(schedule.time);
       displayTime = t.hour + ':' + t.minute + ' ' + t.ampm;
+      row.dataset.rawTime = schedule.time;
     } else {
       const parts = schedule.time.split('T');
       if(parts.length === 2){
@@ -233,7 +236,10 @@ document.getElementById('scheduleTable').addEventListener('click', async functio
     const scheduleId = e.target.getAttribute('data-id');
     const row = e.target.parentElement.parentElement;
     document.getElementById('scheduleId').value = scheduleId;
-    document.getElementById('device').value = row.cells[0].innerText;
+    // For device, we want the raw device value so that when the form renders, the dropdown selects the corresponding option.
+    // We can reverse-lookup the deviceMapping.
+    const deviceValue = deviceMapping.find(d => d.name === row.cells[0].innerText)?.value || row.cells[0].innerText;
+    document.getElementById('device').value = deviceValue;
     document.getElementById('actionToggle').checked = row.cells[1].innerText === 'On';
     document.getElementById('scheduleTypeToggle').checked = row.cells[2].innerText === 'one-time';
     if (row.cells[2].innerText === 'one-time') {
@@ -250,7 +256,9 @@ document.getElementById('scheduleTable').addEventListener('click', async functio
         dateInputContainer.style.display = 'block';
       }
     } else {
-      const t = convertTo12Hour(row.cells[3].innerText);
+      // For daily schedules, use the raw time stored in the row's data attribute
+      const rawTime = row.dataset.rawTime;
+      const t = convertTo12Hour(rawTime);
       document.getElementById('hourSelect').value = t.hour;
       document.getElementById('minuteSelect').value = t.minute;
       ampmToggle.checked = (t.ampm === 'PM');
