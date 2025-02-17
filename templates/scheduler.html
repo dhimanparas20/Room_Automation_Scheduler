@@ -13,12 +13,12 @@
 </head>
 <body class="bg-black text-white">
   <div class="container">
-    <!-- Header row: Title and current time (12-hour formatted) -->
+    <!-- Header row: Title and current time -->
     <div class="row align-items-center header-row">
-      <div class="col-md-6">
+      <div class="col-12 col-md-6">
         <h2 class="mb-0">MQTT Device Scheduler</h2>
       </div>
-      <div class="col-md-6 text-end">
+      <div class="col-12 col-md-6 text-end">
         <div id="currentTime" class="text-sm font-mono"></div>
       </div>
     </div>
@@ -31,7 +31,7 @@
         <form id="scheduleForm">
           <input type="hidden" id="scheduleId">
           <div class="row">
-            <div class="col-md-4 mb-3">
+            <div class="col-12 col-md-4 mb-3">
               <label for="device" class="form-label">Device</label>
               <select class="form-select" id="device" required>
                 {% for device in devices %}
@@ -39,14 +39,14 @@
                 {% endfor %}
               </select>
             </div>
-            <div class="col-md-4 mb-3">
+            <div class="col-12 col-md-4 mb-3">
               <label class="form-label">Action</label>
               <div class="form-check form-switch">
                 <input class="form-check-input" type="checkbox" id="actionToggle">
                 <label class="form-check-label" for="actionToggle">Turn On</label>
               </div>
             </div>
-            <div class="col-md-4 mb-3">
+            <div class="col-12 col-md-4 mb-3">
               <label class="form-label">Schedule Type</label>
               <div class="form-check form-switch">
                 <input class="form-check-input" type="checkbox" id="scheduleTypeToggle">
@@ -56,14 +56,14 @@
           </div>
           <!-- Date Input (only for one-time schedules) -->
           <div class="row mb-3" id="dateInputContainer" style="display: none;">
-            <div class="col-md-4">
+            <div class="col-12 col-md-4">
               <label for="date" class="form-label">Select Date</label>
               <input type="date" class="form-control" id="date">
             </div>
           </div>
           <!-- Time Input: Group of Hour+Minute selects and an AM/PM toggle -->
           <div class="row mb-3" id="timeInputs">
-            <div class="col-md-8">
+            <div class="col-12 col-md-8">
               <div class="input-group">
                 <select id="hourSelect" class="form-select" required>
                   <option value="">Hour</option>
@@ -85,7 +85,7 @@
                 </select>
               </div>
             </div>
-            <div class="col-md-4 d-flex align-items-center">
+            <div class="col-12 col-md-4 d-flex align-items-center">
               <div class="form-check form-switch w-100">
                 <input class="form-check-input" type="checkbox" id="ampmToggle">
                 <label class="form-check-label" for="ampmToggle">AM</label>
@@ -101,22 +101,24 @@
     <div class="card mb-4">
       <div class="card-body">
         <h4 class="card-title">Scheduled Tasks</h4>
-        <table class="table table-dark table-striped" id="scheduleTable">
-          <thead>
-            <tr>
-              <th>Device</th>
-              <th>Action</th>
-              <th>Type</th>
-              <th>Time</th>
-              <th>Last Triggered / Status</th>
-              <th>Active</th>
-              <th>Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            <!-- Schedules will be loaded here -->
-          </tbody>
-        </table>
+        <div class="table-responsive">
+          <table class="table table-dark table-striped" id="scheduleTable">
+            <thead>
+              <tr>
+                <th>Device</th>
+                <th>Action</th>
+                <th>Type</th>
+                <th>Time</th>
+                <th>Last Triggered / Status</th>
+                <th>Active</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <!-- Schedules will be loaded here -->
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
     

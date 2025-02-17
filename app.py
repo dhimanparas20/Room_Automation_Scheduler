@@ -240,4 +240,7 @@ if __name__ == '__main__':
     # On startup, load existing unexecuted schedules from the database and schedule them
     for schedule in schedules_collection.find({"executed": False}):
         schedule_job(schedule)
-    app.run(debug=True, host='0.0.0.0', port=8000)
+    DEBUG = os.getenv("DEBUG", "True") == "True"
+    HOST = os.getenv("HOST", "0.0.0.0")
+    PORT = int(os.getenv("PORT", "8000"))
+    app.run(debug=DEBUG, host=HOST, port=PORT,threaded=True)

@@ -135,7 +135,6 @@ async function fetchSchedules(){
     activeToggle.type = "checkbox";
     activeToggle.checked = schedule.active !== false;
     activeToggle.dataset.id = schedule._id;
-    // Disable toggle for executed one-time schedules
     if (schedule.schedule_type === 'one-time' && schedule.executed) {
       activeToggle.disabled = true;
     }
