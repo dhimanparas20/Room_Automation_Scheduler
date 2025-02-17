@@ -1,0 +1,48 @@
+/* Pitch-black background with glass morphism style */
+body {
+  background-color: #000;
+  color: #f9fafb;
+}
+.container {
+  padding: 20px;
+}
+.card {
+  background-color: rgba(55, 65, 81, 0.7);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+  padding: 20px;
+}
+.table {
+  background-color: rgba(55, 65, 81, 0.7);
+  border-radius: 10px;
+}
+.form-select, .form-control {
+  background-color: rgba(75, 85, 99, 0.7);
+  border-color: rgba(107, 114, 128, 0.5);
+  color: #f9fafb;
+}
+.form-check-input:checked {
+  background-color: #10B981;
+  border-color: #10B981;
+}
+.btn-primary {
+  background-color: rgba(59, 130, 246, 0.8);
+  border-color: rgba(59, 130, 246, 0.8);
+}
+.btn-primary:hover {
+  background-color: rgba(37, 99, 235, 0.8);
+  border-color: rgba(37, 99, 235, 0.8);
+}
+.btn-secondary {
+  background-color: rgba(107, 114, 128, 0.8);
+  border-color: rgba(107, 114, 128, 0.8);
+}
+.btn-secondary:hover {
+  background-color: rgba(75, 85, 99, 0.8);
+  border-color: rgba(75, 85, 99, 0.8);
+}
+/* Remove extra vertical gap above header */
+.header-row {
+  margin-top: 0;
+}

@@ -1,0 +1,50 @@
+# Python cache files
+__pycache__
+*.pyc
+*.pyo
+*.pyd
+.Python
+
+# Environment files
+.env
+
+# Database and log files
+*.sqlite3
+*.log
+*.db
+
+# Application-specific directories
+instance/
+build/
+dist/
+
+# Python package info
+*.egg-info/
+
+# System and IDE files
+.DS_Store
+.vscode/
+
+# Markdown and documentation
+*.md
+
+# Docker and compose-related files
+compose.yml
+docker-compose.yml
+*.tar
+
+# Git files
+.github
+.git
+.gitignore
+
+# Docker-related files
+.dockerignore
+
+# Virtual environments
+venv
+env
+env_sample
+
+# Vercel-related files
+vercel.json

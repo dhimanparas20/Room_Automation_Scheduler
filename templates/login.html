@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html class="dark">
+<head>
+  <meta charset="UTF-8">
+  <title>Login - MQTT Scheduler</title>
+  <link rel="icon" href="/static/images/schedule.png" type="image/jpeg">
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    /* Dark background with glass morphism */
+    body {
+      background-color: #000;
+      color: #f9fafb;
+    }
+    .container {
+      padding: 20px;
+    }
+    .card {
+      background-color: rgba(55, 65, 81, 0.7);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 10px;
+      padding: 20px;
+    }
+    .form-control {
+      background-color: rgba(75, 85, 99, 0.7);
+      border-color: rgba(107, 114, 128, 0.5);
+      color: #f9fafb;
+    }
+    .btn-primary {
+      background-color: rgba(59, 130, 246, 0.8);
+      border-color: rgba(59, 130, 246, 0.8);
+    }
+    .btn-primary:hover {
+      background-color: rgba(37, 99, 235, 0.8);
+      border-color: rgba(37, 99, 235, 0.8);
+    }
+    .text-danger {
+      color: #f87171;
+    }
+  </style>
+</head>
+<body>
+  <div class="container mt-5">
+    <div class="row justify-content-center">
+      <div class="col-md-4">
+        <div class="card shadow-lg">
+          <div class="card-body">
+            <h3 class="card-title text-center mb-4">Login</h3>
+            <form id="loginForm">
+              <div class="mb-3">
+                <label for="token" class="form-label">Enter Token</label>
+                <input type="text" class="form-control" id="token" required>
+              </div>
+              <button type="submit" class="btn btn-primary w-100">Login</button>
+            </form>
+            <div id="errorMsg" class="mt-3 text-danger"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Bootstrap JS Bundle -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    document.getElementById('loginForm').addEventListener('submit', async function(e) {
+      e.preventDefault();
+      const token = document.getElementById('token').value;
+      try {
+        const response = await fetch('/api/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ token: token })
+        });
+        const data = await response.json();
+        if(response.ok){
+          localStorage.setItem('token', token);
+          window.location.href = '/scheduler';
+        } else {
+          document.getElementById('errorMsg').innerText = data.message;
+        }
+      } catch (error) {
+        document.getElementById('errorMsg').innerText = 'Error connecting to server.';
+      }
+    });
+  </script>
+</body>
+</html>

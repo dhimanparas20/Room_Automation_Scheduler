@@ -1,0 +1,6 @@
+venv
+__pycache__
+env
+.env
+tg_bot.session
+tg_bot.session-journal

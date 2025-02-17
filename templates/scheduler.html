@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html class="dark">
+<head>
+  <meta charset="UTF-8">
+  <title>MQTT Scheduler</title>
+  <link rel="icon" href="/static/images/schedule.png" type="image/jpeg">
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- External CSS -->
+  <link rel="stylesheet" href="/static/css/styles.css">
+</head>
+<body class="bg-black text-white">
+  <div class="container">
+    <!-- Header row: Title and current time (12-hour formatted) -->
+    <div class="row align-items-center header-row">
+      <div class="col-md-6">
+        <h2 class="mb-0">MQTT Device Scheduler</h2>
+      </div>
+      <div class="col-md-6 text-end">
+        <div id="currentTime" class="text-sm font-mono"></div>
+      </div>
+    </div>
+    <hr class="my-3" style="border-color: rgba(255,255,255,0.1);">
+    
+    <!-- Add / Update Schedule Form -->
+    <div class="card mb-4">
+      <div class="card-body">
+        <h4 class="card-title">Add / Update Schedule</h4>
+        <form id="scheduleForm">
+          <input type="hidden" id="scheduleId">
+          <div class="row">
+            <div class="col-md-4 mb-3">
+              <label for="device" class="form-label">Device</label>
+              <select class="form-select" id="device" required>
+                {% for device in devices %}
+                  <option value="{{ device.value }}">{{ device.name }}</option>
+                {% endfor %}
+              </select>
+            </div>
+            <div class="col-md-4 mb-3">
+              <label class="form-label">Action</label>
+              <div class="form-check form-switch">
+                <input class="form-check-input" type="checkbox" id="actionToggle">
+                <label class="form-check-label" for="actionToggle">Turn On</label>
+              </div>
+            </div>
+            <div class="col-md-4 mb-3">
+              <label class="form-label">Schedule Type</label>
+              <div class="form-check form-switch">
+                <input class="form-check-input" type="checkbox" id="scheduleTypeToggle">
+                <label class="form-check-label" for="scheduleTypeToggle">One-time</label>
+              </div>
+            </div>
+          </div>
+          <!-- Date Input (only for one-time schedules) -->
+          <div class="row mb-3" id="dateInputContainer" style="display: none;">
+            <div class="col-md-4">
+              <label for="date" class="form-label">Select Date</label>
+              <input type="date" class="form-control" id="date">
+            </div>
+          </div>
+          <!-- Time Input: Group of Hour+Minute selects and an AM/PM toggle -->
+          <div class="row mb-3" id="timeInputs">
+            <div class="col-md-8">
+              <div class="input-group">
+                <select id="hourSelect" class="form-select" required>
+                  <option value="">Hour</option>
+                  <option value="1">1</option>
+                  <option value="2">2</option>
+                  <option value="3">3</option>
+                  <option value="4">4</option>
+                  <option value="5">5</option>
+                  <option value="6">6</option>
+                  <option value="7">7</option>
+                  <option value="8">8</option>
+                  <option value="9">9</option>
+                  <option value="10">10</option>
+                  <option value="11">11</option>
+                  <option value="12">12</option>
+                </select>
+                <select id="minuteSelect" class="form-select" required>
+                  <option value="">Minute</option>
+                </select>
+              </div>
+            </div>
+            <div class="col-md-4 d-flex align-items-center">
+              <div class="form-check form-switch w-100">
+                <input class="form-check-input" type="checkbox" id="ampmToggle">
+                <label class="form-check-label" for="ampmToggle">AM</label>
+              </div>
+            </div>
+          </div>
+          <button type="submit" class="btn btn-primary">Save Schedule</button>
+        </form>
+      </div>
+    </div>
+    
+    <!-- Scheduled Tasks Table (with Active toggle column) -->
+    <div class="card mb-4">
+      <div class="card-body">
+        <h4 class="card-title">Scheduled Tasks</h4>
+        <table class="table table-dark table-striped" id="scheduleTable">
+          <thead>
+            <tr>
+              <th>Device</th>
+              <th>Action</th>
+              <th>Type</th>
+              <th>Time</th>
+              <th>Last Triggered / Status</th>
+              <th>Active</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <!-- Schedules will be loaded here -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+    
+    <!-- Logout Button at Bottom -->
+    <div class="text-center mb-4">
+      <button id="logoutBtn" class="btn btn-secondary">Logout</button>
+    </div>
+  </div>
+  
+  <!-- Bootstrap JS Bundle -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
+  <!-- External JS -->
+  <script src="/static/js/script.js"></script>
+</body>
+</html>
